@@ -1,0 +1,5 @@
+elastic_token: 'Basic xxx'
+rituals_base_url: 'https://dutch-netherlands-csb-site-rituals.stage.endouble.net'
+rituals_uri: 'api/vacancies?search=&filter[companies][]=Head%20office&filter[companies][]=Central%20head%20office&filter[cities][]=Amsterdam&filter[location_names][]=Amsterdam%20Beethovenstraat&page=1&limit=12'
+elastic_base_url: 'https://f2d93f151cde4f5e8d39dbc7efb6157c.eu-west-1.aws.found.io:9243'
+elastic_uri: 'csb_site_rituals_stage_prod_2017-07-05-121300/vacancy/_search?size=10'

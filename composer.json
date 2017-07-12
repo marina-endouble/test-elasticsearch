@@ -1,0 +1,16 @@
+{
+    "name": "marina/test-elasticsearch",
+    "require": {
+        "monolog/monolog": "^1.22",
+        "fzaninotto/Faker": "^1.6",
+        "guzzlehttp/guzzle": "^6.3",
+        "symfony/config": "^3.3",
+        "symfony/yaml": "^3.3"
+    },
+    "authors": [
+        {
+            "name": "Marina Orlova",
+            "email": "marina@endouble.com"
+        }
+    ]
+}

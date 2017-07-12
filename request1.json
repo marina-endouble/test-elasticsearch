@@ -1,0 +1,98 @@
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "bool": {
+            "boost": 0,
+            "must": [
+              {
+                "range": {
+                  "start_date": {
+                    "lte": "now"
+                  }
+                }
+              },
+              {
+                "bool": {
+                  "should": [
+                    {
+                      "range": {
+                        "end_date": {
+                          "gte": "now"
+                        }
+                      }
+                    },
+                    {
+                      "bool": {
+                        "must_not": [
+                          {
+                            "exists": {
+                              "field": "end_date"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "term": {
+                  "is_closed": {
+                    "value": false,
+                    "boost": 1
+                  }
+                }
+              }
+            ]
+          }
+        },
+        {
+          "term": {
+            "locale": {
+              "value": "en_NL",
+              "boost": 0
+            }
+          }
+        }
+      ]
+    }
+  },
+  "sort": [
+    {
+      "start_date": {
+        "order": "DESC"
+      }
+    },
+    {
+      "start_date": {
+        "order": "DESC"
+      }
+    }
+  ],
+  "aggs": {
+    "groupings": {
+      "nested": {
+        "path": "groupings"
+      },
+      "aggs": {
+        "name": {
+          "terms": {
+            "field": "groupings.name.keyword",
+            "min_doc_count": 0,
+            "size": 1000
+          },
+          "aggs": {
+            "value": {
+              "terms": {
+                "field": "groupings.value.keyword",
+                "size": 100
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
