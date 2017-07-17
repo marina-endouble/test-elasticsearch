@@ -15,7 +15,7 @@ $date = (new DateTime('now'))->format("y-m-d-h-i-s");
 
 $logger->pushHandler(new StreamHandler('hit-elasticsearch-' . $date . '.log'));
 
-$configValues = Yaml::parse(file_get_contents(__DIR__ . '/parameters.yml'));
+$config = Yaml::parse(file_get_contents(__DIR__ . '/parameters.yml'));
 
 $faker = Factory::create();
 $query = <<< 'EOT'
@@ -119,10 +119,9 @@ $query = <<< 'EOT'
 }
 EOT;
 
-$statsCallback = function (TransferStats $stats) use ($logger) {
+$statsCallback = function (TransferStats $stats) use ($logger, $config) {
     $time = $stats->getTransferTime();
-//    $headers = $stats->getRequest()->getHeaders();
-    if ($time < 0.5 ) {
+    if ($time < $config['critical_time_interval'] ) {
         return;
     }
     $logger->warn(
@@ -135,20 +134,20 @@ $statsCallback = function (TransferStats $stats) use ($logger) {
     );
 };
 
-$requestToElastic = new Request(
+$elasticRequest = new Request(
     'POST',
-    $configValues['elastic_uri'],
+    $config['elastic_uri'],
     [
         'Content-Type' => 'application/json',
-        'Authorization' => $configValues['elastic_token'],
+        'Authorization' => $config['elastic_token'],
         'Cache-Control' => 'no-cache',
     ],
     $query
 );
 
-$requestToRituals = new Request(
+$csbRequest = new Request(
     'GET',
-    $configValues['rituals_uri'],
+    $config['csb_site_uri'],
     [
         'Content-Type' => 'application/json',
         'Cache-Control' => 'no-cache',
@@ -157,37 +156,29 @@ $requestToRituals = new Request(
 
 $elasticClient = new Client(
     [
-        'base_uri' => $configValues['elastic_base_url'],
+        'base_uri' => $config['elastic_base_url'],
     ]
 );
 
-$ritualsClient = new Client(
+$csbClient = new Client(
     [
-        'base_uri' => $configValues['rituals_base_url'],
+        'base_uri' => $config['csb_site_base_url'],
     ]
 );
+
+$request = ${"{$config['site']}Request"};
+$client = ${"{$config['site']}Client"};
 
 do {
     try {
         $start = (float)microtime(true);
         /** @var Response $response */
-//        $response = $ritualsClient->send(
-//            $requestToRituals,
-//            [
-//                'on_stats' => $statsCallback,
-//                'curl' => [
-//                    CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
-//                    CURLOPT_FRESH_CONNECT => 1,
-//                ],
-//            ]
-//        );
-        $response = $elasticClient->send(
-            $requestToElastic,
+        $response = $client->send(
+            $request,
             [
                 'on_stats' => $statsCallback,
                 'curl' => [
                     CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
-//                    CURLOPT_FRESH_CONNECT => 1,
                 ],
             ]
         );
