@@ -1,4 +1,4 @@
-elastic_token: 'Basic ZWxhc3RpYzowanNYcnlKdmdxd2dDR2Z2ZVo4ZHlTRnM='
+elastic_token: 'Basic ='
 #csb_site_base_url: 'https://dutch-netherlands-csb-site-rituals.stage.endouble.net'
 csb_site_base_url: 'https://career-site-builder.stage.endouble.net/'
 csb_site_uri: 'api/vacancies?search=&filter[companies][]=Head%20office&filter[companies][]=Central%20head%20office&filter[cities][]=Amsterdam&filter[location_names][]=Amsterdam%20Beethovenstraat&page=1&limit=12'
